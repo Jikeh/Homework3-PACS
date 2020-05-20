@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.hub import load_state_dict_from_url
-from gradient_reversal import ReverseLayerF
+from dann_data.gradient_reversal import ReverseLayerF
 
 __all__ = ['AlexNet', 'alexnet']
 
