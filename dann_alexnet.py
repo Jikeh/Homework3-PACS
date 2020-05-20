@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from .utils import load_state_dict_from_url
-
+from torch.hub import load_state_dict_from_url
+from gradient_reversal import ReverseLayerF
 
 __all__ = ['AlexNet', 'alexnet']
 
@@ -40,16 +40,31 @@ class AlexNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(4096, num_classes),
         )
+        self.domain_classifier = nn.Sequential(
+            nn.Dropout(),
+            nn.Linear(256 * 6 * 6, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, 2),
+        )
 
-    def forward(self, x):
+    def forward(self, x, alpha=None):
         x = self.features(x)
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
-        x = self.classifier(x)
+        # x = x.view(x.size(0), -1)
+        if alpha is None:   # forward to label classifier
+            x = self.classifier(x)
+        else:               # forward to domain classifier
+            x = ReverseLayerF.apply(x, alpha)   #   plug-in reverse gradient
+            x = self.domain_classifier(x)
+
         return x
 
 
-def alexnet(pretrained=False, progress=True, **kwargs):
+def alexnet(pretrained=False, progress=True, dann=True, **kwargs):
     r"""AlexNet model architecture from the
     `"One weird trick..." <https://arxiv.org/abs/1404.5997>`_ paper.
 
@@ -61,5 +76,10 @@ def alexnet(pretrained=False, progress=True, **kwargs):
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls['alexnet'],
                                               progress=progress)
-        model.load_state_dict(state_dict)
+        model.load_state_dict(state_dict, strict=False)
+    if dann = True:
+        model.domain_classifier[1].load_state_dict(net.classifier[1].state_dict())
+        model.domain_classifier[4].load_state_dict(net.classifier[4].state_dict())
+            
+
     return model
