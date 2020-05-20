@@ -77,7 +77,7 @@ def alexnet(pretrained=False, progress=True, dann=True, **kwargs):
         state_dict = load_state_dict_from_url(model_urls['alexnet'],
                                               progress=progress)
         model.load_state_dict(state_dict, strict=False)
-        if dann = True:
+        if dann == True:
             model.domain_classifier[1].load_state_dict(net.classifier[1].state_dict())
             model.domain_classifier[4].load_state_dict(net.classifier[4].state_dict())
             
