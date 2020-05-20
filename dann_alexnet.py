@@ -11,7 +11,7 @@ model_urls = {
 }
 
 
-class AlexNet(nn.Module):
+class DaNNAlexNet(nn.Module):
 
     def __init__(self, num_classes=1000):
         super(AlexNet, self).__init__()
@@ -72,14 +72,14 @@ def alexnet(pretrained=False, progress=True, dann=True, **kwargs):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    model = AlexNet(**kwargs)
+    model = DaNNAlexNet(**kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls['alexnet'],
                                               progress=progress)
         model.load_state_dict(state_dict, strict=False)
-    if dann = True:
-        model.domain_classifier[1].load_state_dict(net.classifier[1].state_dict())
-        model.domain_classifier[4].load_state_dict(net.classifier[4].state_dict())
+        if dann = True:
+            model.domain_classifier[1].load_state_dict(net.classifier[1].state_dict())
+            model.domain_classifier[4].load_state_dict(net.classifier[4].state_dict())
             
 
     return model
