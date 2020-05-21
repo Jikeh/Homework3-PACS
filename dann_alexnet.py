@@ -14,7 +14,7 @@ model_urls = {
 class DaNNAlexNet(nn.Module):
 
     def __init__(self, num_classes=1000):
-        super(AlexNet, self).__init__()
+        super(DaNNAlexNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
             nn.ReLU(inplace=True),
@@ -78,8 +78,8 @@ def alexnet(pretrained=False, progress=True, dann=True, **kwargs):
                                               progress=progress)
         model.load_state_dict(state_dict, strict=False)
         if dann == True:
-            model.domain_classifier[1].load_state_dict(net.classifier[1].state_dict())
-            model.domain_classifier[4].load_state_dict(net.classifier[4].state_dict())
+            model.domain_classifier[1].load_state_dict(model.classifier[1].state_dict())
+            model.domain_classifier[4].load_state_dict(model.classifier[4].state_dict())
             
 
     return model
